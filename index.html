@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Streaming Frames</title>
+
+    <style>
+        /* General Styles */
+        @import url('https://fonts.googleapis.com/css?family=Ubuntu');
+        html, body {
+            min-width: 1920px;
+            min-height: 1080px;
+            overflow: visible;
+            padding: 0;
+            margin: 0;
+            font-family: 'Ubuntu';
+            background: #323232;
+        }
+        .container {
+            width: 1920px;
+            height: 1080px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .speaker-info {
+            min-height: 150px;
+            min-width: 150px;
+            text-align: center;
+            position: absolute;
+            font-size: 24pt;
+            top: 735px;
+            left: 125px;
+        }
+
+        #speaker-picture {
+            border-radius: 50%;
+            padding: 10px;
+            width: 185px;
+        }
+
+        #talk-title {
+            position: absolute;
+            top: 1000px;
+            right: 150px;
+            font-size: 32pt;
+            text-align: right;
+            width: 1300px;
+        }
+
+        /* Leeds Sharp Theme */
+        .leeds-sharp {
+            color: #fff;
+        }
+        .leeds-sharp .at {
+            color: #59ff00;
+        }
+        .leeds-sharp .container {
+            background: url('leedssharp.png') no-repeat top left;
+        }
+
+        /* Leeds JS Theme */
+        .leeds-js .container {
+            background: url('leedsjs.png') no-repeat top left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="speaker-info">
+            <div id="speaker-name"><span></span></div>
+            <img id="speaker-picture" src="" alt="">
+            <div id="speaker-twitter"><span class="at">@</span></span><span class="handle"></span></div>
+        </div>
+
+        <div id="talk-title"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <script>
+    $(() => {
+        function updateTalk(data) {
+            $('#speaker-name span').text(data.name);
+            $('#speaker-twitter .handle').text(data.speaker);
+            $('#talk-title').text(data.title);
+            $('#speaker-picture').attr('src', data.img)
+            $('body').removeClass().addClass(data.theme);
+        }
+
+        function fetchDetails() {
+            $.get('/talk', data => updateTalk(data))
+        }
+
+        fetchDetails();
+
+        var socket = io();
+        socket.on('update', updateTalk);
+    });
+    </script>
+</body>
+</html>
